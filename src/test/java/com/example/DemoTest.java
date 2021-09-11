@@ -1,6 +1,5 @@
 package com.example;
 
-import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.runtime.EmbeddedApplication;
 import io.micronaut.rxjava3.http.client.Rx3HttpClient;
@@ -30,7 +29,19 @@ class DemoTest {
     @Test
     public void shouldReceiveHelloWorld(){
         String retrieve = client.retrieve("/hello").blockingLast();
-        assertEquals(retrieve,"Hello World");
+        assertEquals(retrieve,"Hello from service");
+    }
+
+    @Test
+    public void shouldReceivePortugueseGreeting() {
+        String retrieve = client.retrieve("/hello/pt").blockingLast();
+        assertEquals(retrieve, "Olá");
+    }
+
+    @Test
+    public void shouldReceiveJapaneseGreeting() {
+        String retrieve = client.retrieve("/hello/jp").blockingLast();
+        assertEquals(retrieve, "Ohayou");
     }
 
 }
