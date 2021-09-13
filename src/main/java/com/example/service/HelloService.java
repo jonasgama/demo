@@ -12,29 +12,35 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class HelloService {
 
+  private static final Logger LOG = LoggerFactory.getLogger(HelloService.class);
 
-    private static final Logger LOG = LoggerFactory.getLogger(HelloService.class);
+  @Property(name = "hello.service.greeting", defaultValue = "Hello from service")
+  private String greeting;
 
-    @Property(name="hello.service.greeting", defaultValue = "Hello from service")
-    private String greeting;
+  @Inject private ConfigProps config;
 
-    @Inject
-    private ConfigProps config;
+  @EventListener
+  public void onStartup(StartupEvent event) {
+    LOG.debug("Service's been initialized");
+  }
 
-    @EventListener
-    public void onStartup(StartupEvent event){
-        LOG.debug("Service's been initialized");
-    }
-
-    public String greeting(){
-        return greeting;
-    }
-
-    public String greetingFromPt(){
+  public String greeting(String language) {
+    switch (language) {
+      case "pt":
         return config.getPt();
-    }
-    public String greetingFromJp(){
+      case "jp":
         return config.getJp();
+      case "eng":
+        return "Hello";
     }
+    return "";
+  }
 
+  public String greetingFromPt() {
+    return config.getPt();
+  }
+
+  public String greetingFromJp() {
+    return config.getJp();
+  }
 }

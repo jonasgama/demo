@@ -28,8 +28,8 @@ class DemoTest {
 
     @Test
     public void shouldReceiveHelloWorld(){
-        String retrieve = client.retrieve("/hello").blockingLast();
-        assertEquals(retrieve,"Hello from service");
+        String retrieve = client.retrieve("/hello/eng").blockingLast();
+        assertEquals(retrieve,"Hello");
     }
 
     @Test
