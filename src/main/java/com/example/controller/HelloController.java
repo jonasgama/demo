@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.service.HelloService;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
@@ -14,8 +15,12 @@ public class HelloController {
     private HelloService service;
 
     @Get("/{language}")
-    public String hello(@PathVariable String language){
-        return service.greeting(language);
+    public HttpResponse<? extends Object> hello(@PathVariable String language){
+        String greeting = service.greeting(language);
+        if (greeting.isBlank() || greeting.isEmpty()){
+            return HttpResponse.notFound();
+        }
+        return HttpResponse.ok(greeting);
     }
 
 }

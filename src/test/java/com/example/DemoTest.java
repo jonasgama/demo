@@ -1,15 +1,17 @@
 package com.example;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.runtime.EmbeddedApplication;
 import io.micronaut.rxjava3.http.client.Rx3HttpClient;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
-
 import jakarta.inject.Inject;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 @MicronautTest
 class DemoTest {
@@ -42,6 +44,14 @@ class DemoTest {
     public void shouldReceiveJapaneseGreeting() {
         String retrieve = client.retrieve("/hello/jp").blockingLast();
         assertEquals(retrieve, "Ohayou");
+    }
+
+    @Test
+    public void shoudHandleNotFoundLang() {
+        HttpClientResponseException httpException = assertThrows(HttpClientResponseException.class,
+            () -> client.exchange("/hello/qwerty", String.class).blockingLast());
+
+        assertEquals(httpException.getStatus(), HttpStatus.NOT_FOUND);
     }
 
 }
