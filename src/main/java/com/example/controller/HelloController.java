@@ -22,5 +22,4 @@ public class HelloController {
         }
         return HttpResponse.ok(greeting);
     }
-
 }

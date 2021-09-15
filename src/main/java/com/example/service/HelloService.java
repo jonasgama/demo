@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.config.ConfigProps;
+import com.example.inmemory.InMemoryLanguages;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.event.StartupEvent;
 import io.micronaut.runtime.event.annotation.EventListener;

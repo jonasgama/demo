@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @MicronautTest
-class DemoTest {
+class HelloControllerTest {
 
     @Inject
     EmbeddedApplication<?> application;
@@ -47,7 +47,7 @@ class DemoTest {
     }
 
     @Test
-    public void shoudHandleNotFoundLang() {
+    public void shouldHandleNotFoundLang() {
         HttpClientResponseException httpException = assertThrows(HttpClientResponseException.class,
             () -> client.exchange("/hello/qwerty", String.class).blockingLast());
 
