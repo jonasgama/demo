@@ -3,46 +3,55 @@ package com.example.controller;
 import com.example.dto.LanguageDTO;
 import com.example.inmemory.InMemoryLanguages;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Put;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 import jakarta.inject.Inject;
 import java.util.List;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Controller("/languages")
-public class LangController {
+@Controller("/languages/rx")
+public class LangRxController {
 
 
-    private static final Logger LOG = LoggerFactory.getLogger(LangController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LangRxController.class);
 
     @Inject
     private InMemoryLanguages languages;
 
     @Put("/{uuid}")
-    public HttpResponse<? extends Object> put(@PathVariable UUID uuid, @Body LanguageDTO body){
+    public Single<HttpResponse> put(@PathVariable UUID uuid, @Body LanguageDTO body){
         LOG.debug("put"+Thread.currentThread().getName());
         languages.put(uuid, body.language);
-        return HttpResponse.noContent();
+        return Single.fromCallable(()->HttpResponse.noContent());
     }
 
     @Get
-    public HttpResponse<List<LanguageDTO>> get(){
+    public Flowable<LanguageDTO> get(){
         LOG.debug("get list"+Thread.currentThread().getName());
-        return HttpResponse.ok(languages.get());
+        return Flowable.fromIterable(languages.get());
+    }
+
+    @Get("/{uuid}")
+    public Single<LanguageDTO> get(@PathVariable UUID uuid){
+        LOG.debug("get "+Thread.currentThread().getName());
+        return Single.fromCallable(() -> languages.get(uuid));
     }
 
     @Delete("/{uuid}")
-    public HttpResponse<? extends Object> delete(@PathVariable UUID uuid){
+    public Single<HttpResponse> delete(@PathVariable UUID uuid){
         LOG.debug("delete"+Thread.currentThread().getName());
         if(languages.delete(uuid)){
-           return HttpResponse.noContent();
+           return Single.fromCallable(()->HttpResponse.noContent());
        }
-       return HttpResponse.notFound();
+       return Single.fromCallable(()->HttpResponse.notFound());
     }
 }

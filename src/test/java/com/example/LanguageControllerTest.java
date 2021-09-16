@@ -3,7 +3,7 @@ package com.example;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.example.controller.LangController.LanguageRequest;
+import com.example.dto.LanguageDTO;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -13,6 +13,7 @@ import io.micronaut.runtime.EmbeddedApplication;
 import io.micronaut.rxjava3.http.client.Rx3HttpClient;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,8 +35,7 @@ class LanguageControllerTest {
 
     @Test
     public void shouldSaveNewLanguage(){
-        LanguageRequest body = new LanguageRequest();
-        body.language = "German";
+        LanguageDTO body = new LanguageDTO("German");
         HttpResponse response = client.exchange(HttpRequest.PUT("/languages/"+UUID.randomUUID(), body), HttpResponse.class).blockingLast();
         assertEquals(response.status(), HttpStatus.NO_CONTENT);
     }
@@ -43,8 +43,7 @@ class LanguageControllerTest {
 
     @Test
     public void shouldRemove(){
-        LanguageRequest body = new LanguageRequest();
-        body.language = "Spanish";
+        LanguageDTO body = new LanguageDTO("Spanish");
         UUID uuid = UUID.randomUUID();
 
         HttpResponse insertion = client.exchange(HttpRequest.PUT("/languages/"+uuid, body), HttpResponse.class).blockingLast();
@@ -60,5 +59,11 @@ class LanguageControllerTest {
         HttpClientResponseException httpException = assertThrows(HttpClientResponseException.class,
             () ->client.exchange(HttpRequest.DELETE("/languages/"+uuid, null), HttpResponse.class).blockingLast());
         assertEquals(httpException.getStatus(), HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void shouldGetAllInsertedLanguages(){
+        client.exchange(HttpRequest.GET("/languages"), List.class);
+
     }
 }
