@@ -27,6 +27,8 @@ dependencies {
     implementation("javax.annotation:javax.annotation-api")
     runtimeOnly("ch.qos.logback:logback-classic")
     implementation("io.micronaut:micronaut-validation")
+    implementation("io.swagger.core.v3:swagger-annotations")
+    annotationProcessor("io.micronaut.openapi:micronaut-openapi")
 
 }
 
@@ -37,6 +39,13 @@ application {
 java {
     sourceCompatibility = JavaVersion.toVersion("11")
     targetCompatibility = JavaVersion.toVersion("11")
+}
+
+tasks.withType(JavaCompile){
+    options.fork = true
+    options.forkOptions.jvmArgs << '-Dmicronaut.openapi.views.spec=redoc.enabled=true,rapidoc.enabled=true,swagger-ui.enabled=true,swagger-ui.theme=flattop' +
+            '-Amicronaut.processing.group=com.example' +
+            '-Amicronaut.processing.module=micronaut-sample'
 }
 
 
