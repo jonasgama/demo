@@ -3,6 +3,13 @@ micronaut:
     name: demo
   server:
     port: 9000
+  security:
+    authentication: bearer
+    token:
+      jwt:
+        signatures:
+          generator:
+            secret: "pleaseChangeThisSecretForANewOne"
   router:
     static-resources:
       swagger:
@@ -34,11 +41,3 @@ jackson:
   generator:
     writeNumbersAsStrings: true
     writeBigdecimalAsPlain: true
-
- security:
-   authentication: bearer
-   token:
-     jwt:
-       signatures:
-         generator:
-           secret: mysecret
