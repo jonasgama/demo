@@ -6,6 +6,8 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import jakarta.inject.Inject;
+import java.math.BigDecimal;
+import java.time.Instant;
 
 @Controller("${hello.controller.path}")
 public class HelloController {
@@ -21,5 +23,16 @@ public class HelloController {
             return HttpResponse.notFound();
         }
         return HttpResponse.ok(greeting);
+    }
+
+    @Get("/stub")
+    public Greeting greeting(){
+        return new Greeting();
+    }
+
+    public class Greeting{
+        public String textMessage = "STUBBED MESSAGE";
+        public BigDecimal randomNumber = BigDecimal.valueOf(29312093);
+        public Instant timeUtc  = Instant.now();
     }
 }

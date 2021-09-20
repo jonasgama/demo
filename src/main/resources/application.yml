@@ -24,3 +24,21 @@ hello:
     greeting:
       pt: "Olá"
       jp: "Ohayou"
+
+jackson:
+  property-naming-strategy: SNAKE_CASE
+  serialization:
+    writeDatesAsTimestamps: false
+    writeDatesWithZoneId: true
+    writeDateTimestampsAsNanoseconds: false
+  generator:
+    writeNumbersAsStrings: true
+    writeBigdecimalAsPlain: true
+
+ security:
+   authentication: bearer
+   token:
+     jwt:
+       signatures:
+         generator:
+           secret: mysecret

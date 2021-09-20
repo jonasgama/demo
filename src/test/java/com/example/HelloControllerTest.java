@@ -2,13 +2,19 @@ package com.example;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.runtime.EmbeddedApplication;
 import io.micronaut.rxjava3.http.client.Rx3HttpClient;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import io.reactivex.rxjava3.annotations.NonNull;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -52,6 +58,16 @@ class HelloControllerTest {
             () -> client.exchange("/hello/qwerty", String.class).blockingLast());
 
         assertEquals(httpException.getStatus(), HttpStatus.NOT_FOUND);
+    }
+
+
+    @Test
+    public void shouldReceiveStubGreeting() {
+        MutableHttpRequest<Object> get = HttpRequest.GET("/hello/stub");
+        HttpResponse<ObjectNode> exchange = client.exchange(get, ObjectNode.class).blockingLast();
+        assertTrue(String.valueOf(exchange.getBody().get()).contains("text_message"));
+        assertTrue(String.valueOf(exchange.getBody().get()).contains("random_number"));
+        assertTrue(String.valueOf(exchange.getBody().get()).contains("time_utc"));
     }
 
 }

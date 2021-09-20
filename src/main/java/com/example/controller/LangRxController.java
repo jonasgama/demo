@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.dto.LanguageDTO;
 import com.example.inmemory.InMemoryLanguages;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -12,6 +13,10 @@ import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Put;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +32,12 @@ public class LangRxController {
     @Inject
     private InMemoryLanguages languages;
 
+    @Operation(summary = "save or include a new item according to the given uuid")
+    @ApiResponse(
+        content = @Content(mediaType = MediaType.APPLICATION_JSON)
+    )
+    @ApiResponse(responseCode = "400", description = "invalid language name threshold length")
+    @Tag(name="languages")
     @Put("/{uuid}")
     public Single<HttpResponse> put(@PathVariable UUID uuid, @Body LanguageDTO body){
         LOG.debug("put"+Thread.currentThread().getName());
