@@ -31,6 +31,10 @@ dependencies {
     implementation("io.micronaut.security:micronaut-security-jwt")
     implementation("io.micronaut.security:micronaut-security-annotations")
     annotationProcessor("io.micronaut.openapi:micronaut-openapi")
+    annotationProcessor("io.micronaut.data:micronaut-data-processor")
+    implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
+    implementation("io.micronaut.sql:micronaut-jdbc-hikari")
+    runtimeOnly("com.h2database:h2")
 
 }
 
