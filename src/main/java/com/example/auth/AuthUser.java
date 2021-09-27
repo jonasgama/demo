@@ -3,7 +3,6 @@ package com.example.auth;
 import com.example.entity.UserEntity;
 import com.example.repo.UserRepository;
 import io.micronaut.context.event.StartupEvent;
-import io.micronaut.core.util.StringUtils;
 import io.micronaut.runtime.event.annotation.EventListener;
 import io.micronaut.security.authentication.AuthenticationRequest;
 import jakarta.inject.Inject;
@@ -20,7 +19,7 @@ public class AuthUser {
   @Inject
   private UserRepository userRepository;
 
-  public String check(AuthenticationRequest<?, ?> authenticationRequest){
+  public UserEntity check(AuthenticationRequest<?, ?> authenticationRequest){
     Object identity = authenticationRequest.getIdentity();
     Object secret = authenticationRequest.getSecret();
     LOG.debug("id {}", identity);
@@ -29,8 +28,7 @@ public class AuthUser {
     return userRepository.findByUsername(String.valueOf(identity))
             .filter(userEntity -> userEntity.getUsername().equals(identity))
                 .filter(userEntity -> userEntity.getPassword().equals(secret))
-                    .map(userEntity -> userEntity.getUsername())
-                        .orElse(StringUtils.EMPTY_STRING);
+                        .orElse(new UserEntity());
   }
 
 
@@ -40,6 +38,7 @@ public class AuthUser {
     entity.setId(UUID.randomUUID());
     entity.setUsername("sherlock");
     entity.setPassword("pleaseChangeThisSecretForANewOne");
+    entity.setRole("ADMIN");
     userRepository.save(entity);
   }
 
