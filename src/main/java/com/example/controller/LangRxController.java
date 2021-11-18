@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.dto.LanguageDTO;
+import com.example.entity.LanguageEntity;
 import com.example.inmemory.InMemoryLanguages;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
