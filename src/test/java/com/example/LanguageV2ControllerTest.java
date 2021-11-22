@@ -5,9 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.dto.LanguageDTO;
+import com.example.entity.CountryEntity;
 import com.example.entity.LanguageEntity;
 import com.example.inmemory.InMemoryLanguages;
+import com.example.repo.CountryRepository;
 import com.example.repo.LanguagesRepository;
+import com.example.service.LangService;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -20,6 +23,7 @@ import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 import jakarta.inject.Inject;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,20 +36,26 @@ class LanguageV2ControllerTest {
   @Client("/languages/v2")
   private Rx3HttpClient client;
 
+  @Inject
+  private LanguagesRepository langRepository;
 
   @Inject
-  private LanguagesRepository repository;
+  private LangService langService;
+
+  @Inject
+  private CountryRepository countryRepository;
 
 
   @BeforeEach
   public void setup(){
-   Flowable.just(
-        new LanguageEntity(UUID.randomUUID(), "Latin"),
-        new LanguageEntity(UUID.randomUUID(), "Greek"),
-        new LanguageEntity(UUID.randomUUID(), "Hebraic"),
-        new LanguageEntity(UUID.randomUUID(), "Chinese")
-    ).map(repository::save)
-        .blockingLast();
+
+    CountryEntity angola = new CountryEntity("angola");
+    CountryEntity brazil = new CountryEntity("brazil");
+    CountryEntity portugal = new CountryEntity("portugal");
+
+    langService.save(new LanguageEntity(UUID.randomUUID(), "portugues"), List.of(angola, brazil, portugal));
+    langService.save(new LanguageEntity(UUID.randomUUID(), "congo"), List.of(angola));
+    langService.save(new LanguageEntity(UUID.randomUUID(), "ganguela"), List.of(angola));
 
 
   }
@@ -55,7 +65,7 @@ class LanguageV2ControllerTest {
 
 
     Flowable<HttpResponse<List>> exchange = client.exchange(HttpRequest.GET("/"), List.class);
-    assertTrue(exchange.blockingLast().body().size()>=4);
+    assertTrue(exchange.blockingLast().body().size()>=3);
     assertEquals(exchange.blockingLast().getStatus(), HttpStatus.OK);
 
   }

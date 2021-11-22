@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.dto.LanguageDTO;
 import com.example.entity.LanguageEntity;
 import com.example.repo.LanguagesRepository;
+import com.example.service.LangService;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.security.annotation.Secured;
@@ -24,12 +25,12 @@ public class LangV2Controller {
     private static final Logger LOG = LoggerFactory.getLogger(LangV2Controller.class);
 
     @Inject
-    private LanguagesRepository repository;
+    private LangService service;
 
 
     @Get
-    public Single<List<LanguageEntity>> get(){
+    public Single<List<LanguageDTO>> get(){
         LOG.debug("get list from jpa "+Thread.currentThread().getName());
-        return Single.just(repository.findAll());
+        return Single.just(service.get());
     }
 }
