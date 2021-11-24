@@ -26,4 +26,12 @@ public class LanguageDTO {
     entities.forEach(countryEntity -> countries.add(countryEntity.getName()));
   }
 
+  public List<String> getCountries() {
+    return countries;
+  }
+
+  public void setCountries(List<String> countries) {
+    this.countries = countries;
+  }
+
 }

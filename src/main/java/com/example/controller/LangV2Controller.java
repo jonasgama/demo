@@ -33,4 +33,10 @@ public class LangV2Controller {
         LOG.debug("get list from jpa "+Thread.currentThread().getName());
         return Single.just(service.get());
     }
+
+    @Get("/desc")
+    public Single<List<LanguageDTO>> getByDesc(){
+        LOG.debug("get list from jpa "+Thread.currentThread().getName());
+        return Single.just(service.getByDesc());
+    }
 }

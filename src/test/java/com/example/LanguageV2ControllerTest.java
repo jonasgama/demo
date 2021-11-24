@@ -7,25 +7,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.example.dto.LanguageDTO;
 import com.example.entity.CountryEntity;
 import com.example.entity.LanguageEntity;
-import com.example.inmemory.InMemoryLanguages;
 import com.example.repo.CountryRepository;
 import com.example.repo.LanguagesRepository;
 import com.example.service.LangService;
+import io.micronaut.core.type.Argument;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.annotation.Client;
-import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.micronaut.runtime.EmbeddedApplication;
 import io.micronaut.rxjava3.http.client.Rx3HttpClient;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.reactivex.rxjava3.core.Flowable;
-import io.reactivex.rxjava3.core.Single;
 import jakarta.inject.Inject;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,13 +33,7 @@ class LanguageV2ControllerTest {
   private Rx3HttpClient client;
 
   @Inject
-  private LanguagesRepository langRepository;
-
-  @Inject
   private LangService langService;
-
-  @Inject
-  private CountryRepository countryRepository;
 
 
   @BeforeEach
@@ -56,17 +46,33 @@ class LanguageV2ControllerTest {
     langService.save(new LanguageEntity(UUID.randomUUID(), "portugues"), List.of(angola, brazil, portugal));
     langService.save(new LanguageEntity(UUID.randomUUID(), "congo"), List.of(angola));
     langService.save(new LanguageEntity(UUID.randomUUID(), "ganguela"), List.of(angola));
-
-
   }
 
   @Test
   public void shouldGetAllInsertedLanguages() {
-
-
-    Flowable<HttpResponse<List>> exchange = client.exchange(HttpRequest.GET("/"), List.class);
-    assertTrue(exchange.blockingLast().body().size()>=3);
+    Flowable<HttpResponse<List<LanguageDTO>>> exchange = client.exchange(HttpRequest.GET("/"), Argument.listOf(LanguageDTO.class));
+    List<LanguageDTO> body = exchange.blockingLast().body();
+    assertTrue(body.size()>=3);
     assertEquals(exchange.blockingLast().getStatus(), HttpStatus.OK);
+  }
 
+  @Test
+  public void shouldGetAllByDescOrder() {
+    Flowable<HttpResponse<List<LanguageDTO>>> exchange = client.exchange(HttpRequest.GET("/desc"), Argument.listOf(LanguageDTO.class));
+    List<LanguageDTO> body = exchange.blockingLast().body();
+    assertTrue(body.size()>=3);
+
+    assertEquals(body.get(0).language, "portugues");
+    assertTrue(body.get(0).getCountries().containsAll(List.of("angola", "brazil", "portugal")));
+    assertTrue(body.get(0).getCountries().size() == 3);
+
+    assertEquals(body.get(1).language, "ganguela");
+    assertTrue(body.get(1).getCountries().contains("angola"));
+    assertTrue(body.get(1).getCountries().size() == 1);
+
+    assertEquals(body.get(2).language, "congo");
+    assertTrue(body.get(2).getCountries().contains("angola"));
+    assertTrue(body.get(2).getCountries().size() == 1);
+    assertEquals(exchange.blockingLast().getStatus(), HttpStatus.OK);
   }
 }

@@ -46,14 +46,29 @@ public class LangService {
   }
 
   @Transactional(TxType.REQUIRED)
+  public List<LanguageDTO> getByDesc(){
+    return langRepo.listOrderByNameDesc().stream().map(
+        language -> {
+          List<CountryEntity> countriesByLanguage = countryRepo.findCountriesByLanguage(
+              language.getName());
+
+          LanguageDTO languageDTO = new LanguageDTO(language.getName());
+          languageDTO.addCountries(countriesByLanguage);
+
+          return languageDTO;
+        }
+    ).collect(Collectors.toList());
+  }
+
+  @Transactional(TxType.REQUIRED)
   public void save(LanguageEntity language, List<CountryEntity> countries){
     language.setCountry(countries);
 
     langRepo.save(language);
-    language.getCountries().forEach(
+    countries.forEach(
              countryEntity -> countryEntity.addUsedLanguages(Arrays.asList(language))
     );
-    countryRepo.saveAll(language.getCountries());
+    countryRepo.saveAll(countries);
   }
 
 }
