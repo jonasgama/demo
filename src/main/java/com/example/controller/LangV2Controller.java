@@ -6,6 +6,7 @@ import com.example.repo.LanguagesRepository;
 import com.example.service.LangService;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -29,9 +30,10 @@ public class LangV2Controller {
 
 
     @Get
-    public Single<List<LanguageDTO>> get(){
+    public Single<List<LanguageDTO>> get(@QueryValue String name){
         LOG.debug("get list from jpa "+Thread.currentThread().getName());
-        return Single.just(service.get());
+        if(name.isBlank()) return Single.just(service.get());
+        return Single.just(service.get(name+"%"));
     }
 
     @Get("/desc")

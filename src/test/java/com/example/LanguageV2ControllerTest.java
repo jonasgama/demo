@@ -75,4 +75,16 @@ class LanguageV2ControllerTest {
     assertTrue(body.get(2).getCountries().size() == 1);
     assertEquals(exchange.blockingLast().getStatus(), HttpStatus.OK);
   }
+
+  @Test
+  public void shouldFindByName() {
+    Flowable<HttpResponse<List<LanguageDTO>>> exchange = client.exchange(HttpRequest.GET("/?name=gang"), Argument.listOf(LanguageDTO.class));
+    List<LanguageDTO> body = exchange.blockingLast().body();
+    assertTrue(body.size()>=0);
+
+    assertEquals(body.get(0).language, "ganguela");
+    assertTrue(body.get(0).getCountries().contains("angola"));
+    assertTrue(body.get(0).getCountries().size() == 1);
+
+  }
 }

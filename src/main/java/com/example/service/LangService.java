@@ -34,28 +34,35 @@ public class LangService {
   public List<LanguageDTO> get(){
     return langRepo.findAll().stream().map(
         language -> {
-          List<CountryEntity> countriesByLanguage = countryRepo.findCountriesByLanguage(
-              language.getName());
-
-          LanguageDTO languageDTO = new LanguageDTO(language.getName());
-          languageDTO.addCountries(countriesByLanguage);
-
-          return languageDTO;
+          return getLanguageDTO(language);
         }
     ).collect(Collectors.toList());
+  }
+
+  @Transactional(TxType.REQUIRED)
+  public List<LanguageDTO> get(String name){
+    return langRepo.findByNameLike(name).stream().map(
+        language -> {
+          return getLanguageDTO(language);
+        }
+    ).collect(Collectors.toList());
+  }
+
+  private LanguageDTO getLanguageDTO(LanguageEntity language) {
+    List<CountryEntity> countriesByLanguage = countryRepo.findCountriesByLanguage(
+        language.getName());
+
+    LanguageDTO languageDTO = new LanguageDTO(language.getName());
+    languageDTO.addCountries(countriesByLanguage);
+
+    return languageDTO;
   }
 
   @Transactional(TxType.REQUIRED)
   public List<LanguageDTO> getByDesc(){
     return langRepo.listOrderByNameDesc().stream().map(
         language -> {
-          List<CountryEntity> countriesByLanguage = countryRepo.findCountriesByLanguage(
-              language.getName());
-
-          LanguageDTO languageDTO = new LanguageDTO(language.getName());
-          languageDTO.addCountries(countriesByLanguage);
-
-          return languageDTO;
+          return getLanguageDTO(language);
         }
     ).collect(Collectors.toList());
   }

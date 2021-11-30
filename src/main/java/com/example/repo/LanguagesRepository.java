@@ -13,4 +13,6 @@ public interface LanguagesRepository extends CrudRepository<LanguageEntity, UUID
 
   List<LanguageEntity> listOrderByNameDesc();
 
+  List<LanguageEntity> findByNameLike(String name);
+
 }
