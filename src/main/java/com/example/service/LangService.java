@@ -5,15 +5,13 @@ import com.example.entity.CountryEntity;
 import com.example.entity.LanguageEntity;
 import com.example.repo.CountryRepository;
 import com.example.repo.LanguagesRepository;
-import io.micronaut.transaction.TransactionDefinition.Propagation;
-import io.reactivex.rxjava3.core.Single;
+import io.micronaut.data.model.Pageable;
+import io.micronaut.data.model.Slice;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 import org.slf4j.Logger;
@@ -46,6 +44,15 @@ public class LangService {
           return getLanguageDTO(language);
         }
     ).collect(Collectors.toList());
+  }
+
+  @Transactional(TxType.REQUIRED)
+  public Slice<LanguageDTO> get(Pageable pageable){
+    return langRepo.list(pageable).map(
+        language -> {
+          return getLanguageDTO(language);
+        }
+    );
   }
 
   private LanguageDTO getLanguageDTO(LanguageEntity language) {

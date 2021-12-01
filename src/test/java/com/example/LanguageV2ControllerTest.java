@@ -11,6 +11,7 @@ import com.example.repo.CountryRepository;
 import com.example.repo.LanguagesRepository;
 import com.example.service.LangService;
 import io.micronaut.core.type.Argument;
+import io.micronaut.data.model.Slice;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -86,5 +87,15 @@ class LanguageV2ControllerTest {
     assertTrue(body.get(0).getCountries().contains("angola"));
     assertTrue(body.get(0).getCountries().size() == 1);
 
+  }
+
+  @Test
+  public void shouldPaginateByNumberAndSize() {
+    Flowable<HttpResponse<Slice>> exchange = client.exchange(HttpRequest.GET("/pagination?page=1&size=2"), Slice.class);
+    Slice<LanguageDTO> body = exchange.blockingLast().body();
+    assertTrue(body.getContent().size()>=2);
+    assertTrue(body.getPageNumber()==0);
+    assertTrue(body.getSize()==2);
+    assertTrue(body.getNumberOfElements()==2);
   }
 }
