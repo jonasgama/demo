@@ -41,14 +41,14 @@ public class LangV2Controller {
     }
 
     @Get
-    public Single<List<LanguageDTO>> get(@QueryValue String name, @QueryValue Optional<Integer> page, @QueryValue Optional<Integer> size){
+    public Single<List<LanguageDTO>> get(@QueryValue Optional<String> name){
         LOG.debug("get list like name from jpa "+Thread.currentThread().getName());
-        if(name.isBlank()) return Single.just(service.get());
-        return Single.just(service.get(name+"%"));
+        if(name.isEmpty()) return Single.just(service.get());
+        return Single.just(service.get(name.get()+"%"));
     }
 
     @Get("/desc")
-    public Single<List<LanguageDTO>> getByDesc(){
+    public Single<List<LanguageDTO>> get(){
         LOG.debug("get desc list from jpa "+Thread.currentThread().getName());
         return Single.just(service.getByDesc());
     }

@@ -28,7 +28,7 @@ public class LanguageEntity implements Serializable {
   private String name;
 
   @ManyToMany(targetEntity=CountryEntity.class)
-  private List<CountryEntity> countries;
+  private List<CountryEntity> spokenCountries;
 
   public LanguageEntity() {
 
@@ -37,7 +37,7 @@ public class LanguageEntity implements Serializable {
   public LanguageEntity(UUID id, String name){
     this.id = id;
     this.name = name;
-    countries = new ArrayList<>();
+    this.spokenCountries = new ArrayList<>();
   }
 
   public UUID getId() {
@@ -56,11 +56,11 @@ public class LanguageEntity implements Serializable {
     this.name = name;
   }
 
-  public void setCountry(List<CountryEntity> countries) {
-    this.countries = countries;
+  public List<CountryEntity> getSpokenCountries() {
+    return spokenCountries;
   }
 
-  public List<CountryEntity> getCountries() {
-    return countries;
+  public void setSpokenCountries(List<CountryEntity> spokenCountries) {
+    this.spokenCountries = spokenCountries;
   }
 }

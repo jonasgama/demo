@@ -56,11 +56,8 @@ public class LangService {
   }
 
   private LanguageDTO getLanguageDTO(LanguageEntity language) {
-    List<CountryEntity> countriesByLanguage = countryRepo.findCountriesByLanguage(
-        language.getName());
-
     LanguageDTO languageDTO = new LanguageDTO(language.getName());
-    languageDTO.addCountries(countriesByLanguage);
+    languageDTO.addCountries(language.getSpokenCountries());
 
     return languageDTO;
   }
@@ -76,13 +73,20 @@ public class LangService {
 
   @Transactional(TxType.REQUIRED)
   public void save(LanguageEntity language, List<CountryEntity> countries){
-    language.setCountry(countries);
+    language.setSpokenCountries(countries);
 
     langRepo.save(language);
     countries.forEach(
              countryEntity -> countryEntity.addUsedLanguages(Arrays.asList(language))
     );
     countryRepo.saveAll(countries);
+  }
+
+
+  @Transactional(TxType.REQUIRED)
+  public void clean(){
+    langRepo.deleteAll();
+    countryRepo.deleteAll();
   }
 
 }

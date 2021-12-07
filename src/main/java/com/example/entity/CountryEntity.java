@@ -21,7 +21,7 @@ public class CountryEntity implements Serializable {
 
   private String name;
 
-  @ManyToMany(targetEntity = LanguageEntity.class)
+  @ManyToMany(targetEntity = LanguageEntity.class, mappedBy="spokenCountries")
   private List<LanguageEntity> usedLanguages;
 
 
