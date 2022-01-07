@@ -44,19 +44,30 @@ jackson:
 
 datasources:
   default:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/micronaut
     driverClassName: org.postgresql.Driver
     username: admin
     password: pass
-
+    schema-generate: NONE
+    dialect: POSTGRES
 jpa:
-  default:
+   default:
     properties:
-      hibernate:
-        hbm2ddl:
-          auto: update
-        show_sql: true
+       hibernate:
+         hbm2ddl:
+           auto: none
+         show_sql: true
+
+liquibase:
+  datasources:
+    default:
+      enabled: true
+      change-log: 'classpath:db/liquibase-changelog.xml'
+      drop-first: false
+
+
 flyway:
   datasources:
     default:
       enabled: true
+      baseline-on-migrate: true

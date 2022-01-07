@@ -1,27 +1,25 @@
 package com.example.entity;
 
+import org.hibernate.annotations.Columns;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Table(name = "countries")
 @Entity
 public class CountryEntity implements Serializable {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="countries_id_seq")
+  @SequenceGenerator(name = "countries_id_seq", allocationSize = 1)
   private Long id;
 
   private String name;
 
   @ManyToMany(targetEntity = LanguageEntity.class, mappedBy="spokenCountries")
+  @Column(table = "languages_countries", name="used_languages")
   private List<LanguageEntity> usedLanguages;
 
 

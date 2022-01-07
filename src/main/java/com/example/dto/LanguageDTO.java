@@ -14,7 +14,9 @@
 
     public List<String> countries;
 
-    public LanguageDTO(){}
+    public LanguageDTO(){
+      this.countries = new ArrayList<>();
+    }
 
     public LanguageDTO(String language){
 

@@ -1,23 +1,25 @@
 package com.example.controller;
 
 import com.example.dto.LanguageDTO;
+import com.example.entity.CountryEntity;
 import com.example.entity.LanguageEntity;
-import com.example.repo.LanguagesRepository;
 import com.example.service.LangService;
 import io.micronaut.data.model.Pageable;
 import io.micronaut.data.model.Slice;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MutableHttpResponse;
+import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.reactivex.rxjava3.annotations.NonNull;
-import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 import jakarta.inject.Inject;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Flow;
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,17 @@ public class LangV2Controller {
         Integer pageQuery = page.isEmpty() ? 0 : page.get() - 1; //page 0 would be the first one
         Integer sizeQuery = size.isEmpty() ? 2 : size.get();
         return Single.just(service.get(Pageable.from(pageQuery, sizeQuery)));
+    }
+
+    @Put
+    public Single<MutableHttpResponse<Object>> put(@Body LanguageDTO body){
+        LOG.debug("put item in the database "+Thread.currentThread().getName());
+        List<CountryEntity> countryEntities = new ArrayList<>();
+        for (String country : body.getCountries()) {
+            countryEntities.add(new CountryEntity(country));
+        }
+        service.save(new LanguageEntity(UUID.randomUUID(), body.language), countryEntities);
+        return Single.fromCallable(()-> HttpResponse.created(null));
     }
 
     @Get
